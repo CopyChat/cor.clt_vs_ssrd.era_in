@@ -25,8 +25,24 @@ ssrd=ERA_In.ssrd.mon.mean.1983-2005.nc
 clt=ERA_In.clt.mon.mean.1983-2005.nc
 
 # output cor files
-fldcorf=ssrd.clt.seasmean.fldcor.nc
+fldcorf=ssrd.clt.seasonal.fldcor.nc
 seascorf=ssrd.clt.fld.seascor.nc
+
+function cor_seasonal_mean_series()
+{
+
+    # seasonal mean
+    cdo seasmean $ssrd ${ssrd%.nc}.season.nc
+    cdo seasmean $clt ${clt%.nc}.season.nc
+
+    # sel field
+    cordex_SA ${ssrd%.nc}.season.nc ${ssrd%.nc}.season.SA.nc
+    cordex_SA ${clt%.nc}.season.nc ${clt%.nc}.season.SA.nc
+
+    # seasonal fldcor
+    cdo fldcor ${ssrd%.nc}.season.SA.nc ${clt%.nc}.season.SA.nc $fldcorf
+
+}
 
 function seasmean_mon_fldcor()
 {
@@ -48,10 +64,10 @@ function selseas()
     cdo selmon,7 $fldcorf ${fldcorf%.nc}.JJA.nc
 }
 
-#seasmean_mon_fldcor
+
+#cor_seasonal_mean_series
 #selseas
-exit
-#selseas
+#exit
 
 function cor_per_grid()
 {
